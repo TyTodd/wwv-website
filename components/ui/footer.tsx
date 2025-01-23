@@ -9,7 +9,8 @@ export default function Footer({ border = false }: { border?: boolean }) {
         {/* <div
           className={`grid gap-10 py-8 sm:grid-cols-12 md:py-12 ${border ? "border-t [border-image:linear-gradient(to_right,transparent,theme(colors.slate.200),transparent)1]" : ""}`}
         > */}
-        <div className="flex flex-row justify-between">
+        <div className="absolute flex flex-col">
+          {/* <div className="flex flex-row justify-between"> */}
           <Link
             className="text-gray-600 transition hover:text-gray-900"
             href="#0"
@@ -81,6 +82,7 @@ export default function Footer({ border = false }: { border?: boolean }) {
             </ul>
           </div>
         </div>
+        {/* </div> */}
       </div>
       {/* </div> */}
 
