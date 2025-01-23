@@ -16,7 +16,7 @@ export default function Home() {
       {/* <BusinessCategories /> */}
       <FeaturesPlanet />
       <LargeTestimonial />
-      <Cta />
+      {/* <Cta /> */}
     </>
   );
 }
