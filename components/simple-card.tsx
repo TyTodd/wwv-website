@@ -1,18 +1,12 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
 interface CardProps {
   title: string;
-  description: string;
   delay: number;
   children: ReactNode;
 }
 
-const SimpleCard: React.FC<CardProps> = ({
-  title,
-  description,
-  delay,
-  children,
-}) => {
+const SimpleCard: React.FC<CardProps> = ({ title, delay, children }) => {
   return (
     <div
       data-aos="flip-down"

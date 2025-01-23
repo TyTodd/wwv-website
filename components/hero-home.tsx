@@ -120,6 +120,7 @@ export default function HeroHome() {
                   <Image
                     src={women_at_table}
                     className="pt-10 object-contain"
+                    alt="women at table"
                   />
                 </div>
               </div>
