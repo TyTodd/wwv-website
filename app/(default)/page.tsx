@@ -5,18 +5,22 @@ export const metadata = {
 
 import Hero from "@/components/hero-home";
 import BusinessCategories from "@/components/business-categories";
-import FeaturesPlanet from "@/components/features-planet";
+import Offers from "@/components/offers";
 import LargeTestimonial from "@/components/large-testimonial";
 import Cta from "@/components/cta";
+import Stats from "@/components/stats";
+import Testimonials from "@/components/testimonials";
 
 export default function Home() {
   return (
     <>
       <Hero />
       {/* <BusinessCategories /> */}
-      <FeaturesPlanet />
-      <LargeTestimonial />
+      <Stats />
+      <Offers />
+      {/* <LargeTestimonial /> */}
       {/* <Cta /> */}
+      <Testimonials />
     </>
   );
 }

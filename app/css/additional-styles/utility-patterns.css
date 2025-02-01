@@ -57,3 +57,23 @@ input[type="search"]::-webkit-search-results-decoration {
 .form-radio {
   @apply rounded-sm text-gray-800;
 }
+
+.svg-icon-light {
+  @apply bg-white aspect-square p-3 rounded-full stroke-[#111827] fill-[#111827] flex items-center justify-center;
+}
+/* .svg-icon-dark {
+  @apply bg-[#111827] py-5 px-5 rounded-[80px];
+} */
+
+/* .svg-icon-dark {
+  background-color: #111827 !important ;
+  border-radius: 80px !important;
+  fill: white;
+  stroke: white;
+  height: 50px;
+  width: 50px;
+} */
+
+.svg-icon-dark {
+  @apply bg-[#111827] aspect-square p-3 rounded-full stroke-white fill-white flex items-center justify-center;
+}
