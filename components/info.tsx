@@ -695,7 +695,7 @@ export default function Info() {
                     type="file"
                     accept=".pdf, .doc, .docx"
                     className="form-input py-2"
-                    onChange={handleInputChange}
+                    // onChange={handleInputChange}
                   />
                   {formData?.resume &&
                     Array.isArray(formData.resume) &&
