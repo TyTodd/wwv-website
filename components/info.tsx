@@ -24,7 +24,21 @@ interface FormDataType {
 export default function Info() {
   const [userType, setUserType] = useState("student");
   const { user, isLoaded } = useUser();
-  const [formData, setFormData] = useState<FormDataType>({});
+  const [formData, setFormData] = useState<FormDataType>({
+    first_name: "",
+    last_name: "",
+    email: "",
+    university: "",
+    linkedin_url: "",
+    opportunity_interests: [],
+    position_interests: [],
+    area_interests: [],
+    work_authorization: false,
+    visa_sponsorship: false,
+    background: "",
+    resume: "",
+    links: "",
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({
     success: false,
