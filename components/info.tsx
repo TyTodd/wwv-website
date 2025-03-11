@@ -17,7 +17,7 @@ interface FormDataType {
   university: string;
   linkedin_url: string;
   background?: string;
-  resume: string | FileData[];
+  resume?: string | FileData[];
   links?: string;
   work_authorization: boolean;
   visa_sponsorship: boolean;
@@ -29,7 +29,19 @@ interface FormDataType {
 export default function Info() {
   const [userType, setUserType] = useState("student");
   const { user, isLoaded } = useUser();
-  const [formData, setFormData] = useState<FormDataType | null>(null);
+  const [formData, setFormData] = useState<FormDataType>({
+    first_name: "",
+    last_name: "",
+    email: "",
+    university: "",
+    linkedin_url: "",
+    resume: [],
+    work_authorization: false,
+    visa_sponsorship: false,
+    opportunity_interests: [],
+    position_interests: [],
+    area_interests: [],
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({
     success: false,
@@ -37,13 +49,23 @@ export default function Info() {
   });
   const [saved, setSaved] = useState(true);
 
-  useEffect(() => {
-    console.log("saved", saved);
-  }, [saved]);
+  // useEffect(() => {
+  //   console.log("saved", saved);
+  // }, [saved]);
 
   useEffect(() => {
-    if (isLoaded && user && formData === null) {
-      console.log(user);
+    console.log("formData", formData);
+  }, [formData]);
+
+  // useEffect(() => {
+  //   if (formData?.resume?.length) {
+  //     console.log("resume", formData.resume[0]);
+  //   }
+  // }, [formData]);
+
+  useEffect(() => {
+    if (isLoaded && user) {
+      // Load profile data when user is loaded
       loadProfile();
     }
   }, [isLoaded, user]);
@@ -53,7 +75,7 @@ export default function Info() {
       method: "GET",
     });
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     // setProfile(data);
     setFormData(data);
   };
@@ -63,8 +85,13 @@ export default function Info() {
   ) => {
     setSaved(false);
     const { id, value, type, checked, files } = e.target as HTMLInputElement;
+    console.log("formData1", formData);
     // console.log(type);
     if (type === "file" && files && files.length > 0) {
+      // Stop propagation and prevent default to avoid any form submission
+      e.stopPropagation();
+      e.preventDefault();
+
       // Handle file upload
       const file = files[0];
       // Create a URL for the file
@@ -73,33 +100,32 @@ export default function Info() {
       console.log("file", file);
 
       setFormData((prev) => {
-        if (!prev) return prev;
+        console.log("prev", prev);
         return {
           ...prev,
+          // Ensure we store as an array of FileData objects
           [id]: [{ url: fileUrl, filename: file.name }],
         };
       });
     } else if (type === "checkbox") {
       // For checkboxes, we need to handle multiple selections
       setFormData((prev) => {
-        if (!prev) return prev;
         const fieldName = e.target.name;
         const prevValues = (prev[fieldName] as string[]) || [];
 
         if (checked) {
           // console.log("checkbox checked");
-          console.log(fieldName);
+          // console.log(fieldName);
           return { ...prev, [fieldName]: [...prevValues, value] };
         } else {
           // console.log("checkbox unchecked");
           return {
             ...prev,
-            [fieldName]: prevValues.filter((v: string) => v !== value),
+            [fieldName]: prevValues.filter((item) => item !== value),
           };
         }
       });
     } else if (id === "work_authorization" || id === "visa_sponsorship") {
-      console.log("work_authorization or visa_sponsorship");
       // Convert "yes"/"no" string to boolean
       setFormData((prev) => {
         if (!prev) return prev;
@@ -109,9 +135,7 @@ export default function Info() {
         };
       });
     } else {
-      // For other input types
       setFormData((prev) => {
-        if (!prev) return prev;
         return {
           ...prev,
           [id]: value,
@@ -121,7 +145,10 @@ export default function Info() {
   };
 
   const handleSubmit = async (e: FormEvent) => {
+    // Make sure to prevent default and stop propagation
     e.preventDefault();
+    e.stopPropagation();
+
     setIsSubmitting(true);
     setSubmitStatus({ success: false, message: "" });
 
@@ -133,7 +160,7 @@ export default function Info() {
         email: user?.primaryEmailAddress?.emailAddress || formData?.email,
         user_id: user?.id,
       };
-      console.log(dataToSubmit);
+      // console.log(dataToSubmit);
       // Remove termsAgreement from formData before submitting
       delete (dataToSubmit as any).termsAgreement;
       delete (dataToSubmit as any).userType;
@@ -695,15 +722,26 @@ export default function Info() {
                     type="file"
                     accept=".pdf, .doc, .docx"
                     className="form-input py-2"
-                    // onChange={handleInputChange}
+                    onChange={(e) => {
+                      // Explicitly stop event propagation and prevent default
+                      e.stopPropagation();
+                      e.preventDefault();
+                      handleInputChange(e);
+                    }}
+                    // Add key to force re-render when formData changes
+                    key={formData?.resume ? "resume-with-data" : "resume-empty"}
                   />
                   {formData?.resume &&
-                    Array.isArray(formData.resume) &&
-                    formData.resume[0] && (
-                      <p className="mt-2 text-sm text-gray-600">
-                        Current file: {formData.resume[0].filename}
-                      </p>
-                    )}
+                  Array.isArray(formData.resume) &&
+                  formData.resume[0] ? (
+                    <p className="mt-2 text-sm text-gray-600">
+                      Current file: {formData.resume[0].filename}
+                    </p>
+                  ) : (
+                    <p className="mt-2 text-sm text-gray-600">
+                      No file uploaded
+                    </p>
+                  )}
                 </div>
                 <div className="mt-4 w-3/4">
                   <label
