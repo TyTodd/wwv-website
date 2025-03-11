@@ -235,6 +235,8 @@ export default function Profile() {
                     className="form-input py-2"
                     type="email"
                     placeholder="corybarker@email.com"
+                    value={user?.primaryEmailAddress?.emailAddress || ""}
+                    readOnly={!!user?.primaryEmailAddress?.emailAddress}
                     required
                     onChange={handleInputChange}
                   />

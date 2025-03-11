@@ -4,15 +4,20 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 
 // Define an interface for the form data
+interface FileData {
+  url: string;
+  filename: string;
+}
+
 interface FormDataType {
-  [key: string]: string | string[] | boolean | undefined;
+  [key: string]: string | string[] | boolean | undefined | FileData[];
   first_name: string;
   last_name: string;
   email: string;
   university: string;
   linkedin_url: string;
   background?: string;
-  resume?: string;
+  resume: string | FileData[];
   links?: string;
   work_authorization: boolean;
   visa_sponsorship: boolean;
@@ -24,21 +29,7 @@ interface FormDataType {
 export default function Info() {
   const [userType, setUserType] = useState("student");
   const { user, isLoaded } = useUser();
-  const [formData, setFormData] = useState<FormDataType>({
-    first_name: "",
-    last_name: "",
-    email: "",
-    university: "",
-    linkedin_url: "",
-    opportunity_interests: [],
-    position_interests: [],
-    area_interests: [],
-    work_authorization: false,
-    visa_sponsorship: false,
-    background: "",
-    resume: "",
-    links: "",
-  });
+  const [formData, setFormData] = useState<FormDataType | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({
     success: false,
@@ -51,7 +42,7 @@ export default function Info() {
   }, [saved]);
 
   useEffect(() => {
-    if (isLoaded && user) {
+    if (isLoaded && user && formData === null) {
       console.log(user);
       loadProfile();
     }
@@ -71,11 +62,27 @@ export default function Info() {
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setSaved(false);
-    const { id, value, type, checked } = e.target as HTMLInputElement;
+    const { id, value, type, checked, files } = e.target as HTMLInputElement;
     // console.log(type);
-    if (type === "checkbox") {
+    if (type === "file" && files && files.length > 0) {
+      // Handle file upload
+      const file = files[0];
+      // Create a URL for the file
+      const fileUrl = URL.createObjectURL(file);
+      console.log("fileUrl", fileUrl);
+      console.log("file", file);
+
+      setFormData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          [id]: [{ url: fileUrl, filename: file.name }],
+        };
+      });
+    } else if (type === "checkbox") {
       // For checkboxes, we need to handle multiple selections
       setFormData((prev) => {
+        if (!prev) return prev;
         const fieldName = e.target.name;
         const prevValues = (prev[fieldName] as string[]) || [];
 
@@ -94,13 +101,22 @@ export default function Info() {
     } else if (id === "work_authorization" || id === "visa_sponsorship") {
       console.log("work_authorization or visa_sponsorship");
       // Convert "yes"/"no" string to boolean
-      setFormData((prev) => ({
-        ...prev,
-        [id]: value === "yes",
-      }));
+      setFormData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          [id]: value === "yes",
+        };
+      });
     } else {
       // For other input types
-      setFormData((prev) => ({ ...prev, [id]: value }));
+      setFormData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          [id]: value,
+        };
+      });
     }
   };
 
@@ -114,7 +130,7 @@ export default function Info() {
       let dataToSubmit = {
         ...formData,
         userType,
-        email: user?.primaryEmailAddress?.emailAddress || formData.email,
+        email: user?.primaryEmailAddress?.emailAddress || formData?.email,
         user_id: user?.id,
       };
       console.log(dataToSubmit);
@@ -228,6 +244,7 @@ export default function Info() {
                     type="email"
                     placeholder="corybarker@email.com"
                     value={formData?.email || ""}
+                    readOnly={true}
                     required
                     onChange={handleInputChange}
                   />
@@ -678,9 +695,15 @@ export default function Info() {
                     type="file"
                     accept=".pdf, .doc, .docx"
                     className="form-input py-2"
-                    value={formData?.resume || ""}
                     onChange={handleInputChange}
                   />
+                  {formData?.resume &&
+                    Array.isArray(formData.resume) &&
+                    formData.resume[0] && (
+                      <p className="mt-2 text-sm text-gray-600">
+                        Current file: {formData.resume[0].filename}
+                      </p>
+                    )}
                 </div>
                 <div className="mt-4 w-3/4">
                   <label
