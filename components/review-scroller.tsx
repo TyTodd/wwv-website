@@ -19,6 +19,18 @@ const CompanyLogoData: Array<ReactNode> = [
     message="This was my first time working closely with a startup, and I definitely learned a lot. It helped me improve my design skills, problem-solving abilities, and gain hands-on experience in a real company setting."
     src={AmandaT}
   />,
+  <LargeTestimonial
+    name="Katherine Harvey"
+    school="Computer Science student at Harvard University"
+    message="Through this experience, I got to work on real-world projects with direct impact. We just deployed the work I had been developing, revamping the entire website and mobile experience—it was incredibly rewarding to see it go live."
+    src={KatherineH}
+  />,
+  <LargeTestimonial
+    name="Amanda T."
+    school="MIT Computation and Cognition recent graduate"
+    message="This was my first time working closely with a startup, and I definitely learned a lot. It helped me improve my design skills, problem-solving abilities, and gain hands-on experience in a real company setting."
+    src={AmandaT}
+  />,
 ];
 interface ScrollerProps {
   color: string;

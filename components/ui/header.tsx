@@ -1,5 +1,26 @@
 import Link from "next/link";
 import Logo from "./logo";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
+import Info from "../info";
+
+const UserIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 512 512"
+      fill="currentColor"
+    >
+      <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" />
+    </svg>
+  );
+};
 
 export default function Header() {
   return (
@@ -10,26 +31,38 @@ export default function Header() {
           {/* <div className="flex flex-1 items-center">
             <Logo />
           </div> */}
-          WWV Labs
+          <Link href="/" className="text-2xl font-bold">
+            WWV Labs
+          </Link>
           {/* Desktop sign in links */}
-          <ul className="flex flex-1 items-center justify-end gap-3">
-            <li>
-              <Link
-                href="/signin"
-                className="btn-sm bg-white text-gray-800 shadow hover:bg-gray-50"
-              >
-                Login
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/signup"
-                className="btn-sm bg-gray-800 text-gray-200 shadow hover:bg-gray-900"
-              >
-                Register
-              </Link>
-            </li>
-          </ul>
+          <SignedOut>
+            <ul className="flex flex-1 items-center justify-end gap-3">
+              <li>
+                <SignInButton>
+                  <button className="btn-sm bg-white text-gray-800 shadow hover:bg-gray-50">
+                    Login
+                  </button>
+                </SignInButton>
+              </li>
+              <li>
+                <SignUpButton>
+                  <button className="btn-sm bg-gray-800 text-gray-200 shadow hover:bg-gray-900">
+                    Register
+                  </button>
+                </SignUpButton>
+              </li>
+            </ul>
+          </SignedOut>
+          <SignedIn>
+            <ul className="flex flex-1 items-center justify-end gap-3">
+              <li>
+                <UserButton
+                  userProfileMode="navigation"
+                  userProfileUrl="/profile"
+                ></UserButton>
+              </li>
+            </ul>
+          </SignedIn>
         </div>
       </div>
     </header>
