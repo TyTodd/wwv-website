@@ -9,7 +9,6 @@ import Avatar05 from "@/public/images/avatar-05.jpg";
 import Avatar06 from "@/public/images/avatar-06.jpg";
 import women_at_table from "@/public/images/unsplash-image-ZKHksse8tUU.jpg";
 import InfiniteScrollingLogosAnimation from "@/components/school-scroller";
-
 export default function HeroStartups() {
   return (
     <section className="relative min-h-screen">
@@ -33,7 +32,7 @@ export default function HeroStartups() {
             </h1>
             <div className="mx-auto">
               <p
-                className="mb-8 text-lg text-gray-700"
+                className="mb-8 text-xl text-gray-700"
                 data-aos="zoom-y-out"
                 data-aos-delay={300}
               >
@@ -50,7 +49,7 @@ export default function HeroStartups() {
                   >
                     <a
                       className="btn group mb-4 w-full bg-gradient-to-t from-[#FF989F] to-[#DB7B81] bg-[length:100%_100%] bg-[bottom] text-white shadow hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto"
-                      href="#0"
+                      href="https://tally.so/r/wLJA8v"
                     >
                       <span className="relative inline-flex items-center">
                         Submit a Job Request{" "}
@@ -61,7 +60,7 @@ export default function HeroStartups() {
                     </a>
                     <a
                       className="btn w-full bg-white text-gray-800 shadow hover:bg-gray-50 sm:ml-4 sm:w-auto"
-                      href="#0"
+                      href="https://calendly.com/adrian_arnaboldi/wwv-labs-meeting"
                     >
                       Schedule a Call
                     </a>

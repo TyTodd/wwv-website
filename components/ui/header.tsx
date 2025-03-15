@@ -40,14 +40,14 @@ export default function Header() {
               <li>
                 <SignInButton>
                   <button className="btn-sm bg-white text-gray-800 shadow hover:bg-gray-50">
-                    Login
+                    Student Login
                   </button>
                 </SignInButton>
               </li>
               <li>
                 <SignUpButton>
                   <button className="btn-sm bg-gray-800 text-gray-200 shadow hover:bg-gray-900">
-                    Register
+                    Student Sign Up
                   </button>
                 </SignUpButton>
               </li>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Logo from "./logo";
-
+import { SignUpButton } from "@clerk/nextjs";
 export default function Footer({ border = false }: { border?: boolean }) {
   return (
     <footer>
@@ -9,77 +9,80 @@ export default function Footer({ border = false }: { border?: boolean }) {
         {/* <div
           className={`grid gap-10 py-8 sm:grid-cols-12 md:py-12 ${border ? "border-t [border-image:linear-gradient(to_right,transparent,theme(colors.slate.200),transparent)1]" : ""}`}
         > */}
-        <div className="absolute flex flex-col">
+        <div className="absolute left-1/2 -translate-x-1/2 z-10 flex flex-col">
           {/* <div className="flex flex-row justify-between"> */}
-          <Link
-            className="text-gray-600 transition hover:text-gray-900"
-            href="#0"
-          >
-            About us
-          </Link>
-          <Link
-            className="text-gray-600 transition hover:text-gray-900"
-            href="#0"
-          >
-            Contact Us
-          </Link>
-          <Link
-            className="text-gray-600 transition hover:text-gray-900"
-            href="#0"
-          >
-            Blog
-          </Link>
+          <div className="flex flex-row justify-center">
+            <SignUpButton>
+              <button className="text-gray-600 transition hover:text-gray-900 mb-3 underline">
+                Apply
+              </button>
+            </SignUpButton>
+            <Link
+              className="text-gray-600 transition hover:text-gray-900 ml-10 mb-3 underline"
+              href="https://blog.wwvlabs.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Blog
+            </Link>
+          </div>
+          <div className="flex flex-row justify-center">
+            <Link
+              className="text-gray-600 transition hover:text-gray-900 mb-3 underline"
+              href="mailto:info@wwvlabs.com"
+            >
+              info@wwvlabs.com
+            </Link>
+          </div>
+          <div className="flex flex-row justify-center">
+            <Link
+              className="text-gray-600 transition hover:text-gray-900 mb-3 underline"
+              href="/terms"
+            >
+              Terms of Service
+            </Link>
+          </div>
 
           {/* 5th block */}
-          <div className="space-y-2 sm:col-span-6 md:col-span-3 lg:col-span-2">
+          <div className="space-y-2 sm:col-span-6 md:col-span-3 lg:col-span-2 justify-center">
             {/* <h3 className="text-sm font-medium">Social</h3> */}
-            <ul className="flex gap-1">
-              <li>
-                <Link
-                  className="flex items-center justify-center text-blue-500 transition hover:text-blue-600"
-                  href="#0"
-                  aria-label="Twitter"
-                >
-                  <svg
-                    className="h-8 w-8 fill-current"
-                    viewBox="0 0 32 32"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="m13.063 9 3.495 4.475L20.601 9h2.454l-5.359 5.931L24 23h-4.938l-3.866-4.893L10.771 23H8.316l5.735-6.342L8 9h5.063Zm-.74 1.347h-1.457l8.875 11.232h1.36l-8.778-11.232Z"></path>
-                  </svg>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="flex items-center justify-center text-blue-500 transition hover:text-blue-600"
-                  href="#0"
-                  aria-label="Medium"
-                >
-                  <svg
-                    className="h-8 w-8 fill-current"
-                    viewBox="0 0 32 32"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M23 8H9a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1Zm-1.708 3.791-.858.823a.251.251 0 0 0-.1.241V18.9a.251.251 0 0 0 .1.241l.838.823v.181h-4.215v-.181l.868-.843c.085-.085.085-.11.085-.241v-4.887l-2.41 6.131h-.329l-2.81-6.13V18.1a.567.567 0 0 0 .156.472l1.129 1.37v.181h-3.2v-.181l1.129-1.37a.547.547 0 0 0 .146-.472v-4.749a.416.416 0 0 0-.138-.351l-1-1.209v-.181H13.8l2.4 5.283 2.122-5.283h2.971l-.001.181Z"></path>
-                  </svg>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="flex items-center justify-center text-blue-500 transition hover:text-blue-600"
-                  href="#0"
-                  aria-label="Github"
-                >
-                  <svg
-                    className="h-8 w-8 fill-current"
-                    viewBox="0 0 32 32"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path d="M16 8.2c-4.4 0-8 3.6-8 8 0 3.5 2.3 6.5 5.5 7.6.4.1.5-.2.5-.4V22c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.3.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8.6-.2 1.3-.3 2-.3s1.4.1 2 .3c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.7-3.7 3.9.3.4.6.9.6 1.6v2.2c0 .2.1.5.6.4 3.2-1.1 5.5-4.1 5.5-7.6-.1-4.4-3.7-8-8.1-8z"></path>
-                  </svg>
-                </Link>
-              </li>
-            </ul>
+            <Link
+              className="flex items-center justify-center text-blue-500 transition hover:text-blue-600"
+              href="https://www.linkedin.com/company/wwv-labs"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+            >
+              <svg
+                fill="#000000"
+                height="20px"
+                width="20px"
+                version="1.1"
+                id="Layer_1"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 310 310"
+              >
+                <g id="XMLID_801_">
+                  <path
+                    id="XMLID_802_"
+                    d="M72.16,99.73H9.927c-2.762,0-5,2.239-5,5v199.928c0,2.762,2.238,5,5,5H72.16c2.762,0,5-2.238,5-5V104.73
+		C77.16,101.969,74.922,99.73,72.16,99.73z"
+                  />
+                  <path
+                    id="XMLID_803_"
+                    d="M41.066,0.341C18.422,0.341,0,18.743,0,41.362C0,63.991,18.422,82.4,41.066,82.4
+		c22.626,0,41.033-18.41,41.033-41.038C82.1,18.743,63.692,0.341,41.066,0.341z"
+                  />
+                  <path
+                    id="XMLID_804_"
+                    d="M230.454,94.761c-24.995,0-43.472,10.745-54.679,22.954V104.73c0-2.761-2.238-5-5-5h-59.599
+		c-2.762,0-5,2.239-5,5v199.928c0,2.762,2.238,5,5,5h62.097c2.762,0,5-2.238,5-5v-98.918c0-33.333,9.054-46.319,32.29-46.319
+		c25.306,0,27.317,20.818,27.317,48.034v97.204c0,2.762,2.238,5,5,5H305c2.762,0,5-2.238,5-5V194.995
+		C310,145.43,300.549,94.761,230.454,94.761z"
+                  />
+                </g>
+              </svg>
+            </Link>
           </div>
         </div>
         {/* </div> */}

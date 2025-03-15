@@ -866,7 +866,7 @@ export default function Info() {
               // Startup Form Section
               <div className="p-4 border border-gray-300 rounded-md">
                 <p className=" text-gray-700">
-                  Startup profile information will be collected here.
+                  Please refer to the startups page for more information.
                 </p>
               </div>
             )}

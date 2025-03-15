@@ -3,15 +3,20 @@ import { DotIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import React from "react";
 import { motion } from "framer-motion";
-import company_logo from "@/public/images/company-logo1.png";
+import harvard from "@/public/images/harvard_logo.png";
+import mit from "@/public/images/MIT_logo.png";
+import berkeley from "@/public/images/berkley_logo.png";
+import stanford from "@/public/images/stanford.webp";
+import northeastern from "@/public/images/northeastern.png";
+import columbia from "@/public/images/columbia_logo.png";
 
 const CompanyLogoData: Array<{ src: any; alt: string }> = [
-  { src: company_logo, alt: "Harvard" },
-  { src: company_logo, alt: "MIT" },
-  { src: company_logo, alt: "Berkeley" },
-  { src: company_logo, alt: "Stanford" },
-  { src: company_logo, alt: "Northeastern" },
-  { src: company_logo, alt: "Columbia" },
+  { src: harvard, alt: "Harvard" },
+  { src: mit, alt: "MIT" },
+  { src: berkeley, alt: "Berkeley" },
+  { src: stanford, alt: "Stanford" },
+  { src: northeastern, alt: "Northeastern" },
+  { src: columbia, alt: "Columbia" },
 ];
 interface ScrollerProps {
   color: string;
@@ -19,7 +24,7 @@ interface ScrollerProps {
 const InfiniteScrollingLogosAnimation = () => {
   return (
     <div className="container p-5 w-full mt-auto">
-      <h2 className="text-center my-5 text-lg text-gray-700">
+      <h2 className="text-center my-5 text-xl text-gray-700 font-bold">
         Hire from a pool of 1,000+ top students and graduates with expertise in
         engineering, AI/ML, marketing, and operations, from leading universities
         such as

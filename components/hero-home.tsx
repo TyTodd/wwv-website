@@ -1,14 +1,6 @@
 "use client";
-import Image from "next/image";
 import PageIllustration from "@/components/page-illustration";
-import Avatar01 from "@/public/images/avatar-01.jpg";
-import Avatar02 from "@/public/images/avatar-02.jpg";
-import Avatar03 from "@/public/images/avatar-03.jpg";
-import Avatar04 from "@/public/images/avatar-04.jpg";
-import Avatar05 from "@/public/images/avatar-05.jpg";
-import Avatar06 from "@/public/images/avatar-06.jpg";
-import women_at_table from "@/public/images/unsplash-image-ZKHksse8tUU.jpg";
-import InfiniteScrollingLogosAnimation from "@/components/logo-scroller";
+import { SignUpButton } from "@clerk/nextjs";
 
 export default function HeroHome() {
   return (
@@ -48,7 +40,7 @@ export default function HeroHome() {
                   >
                     <a
                       className="btn group mb-4 w-full bg-gradient-to-t from-[#FF989F] to-[#DB7B81] bg-[length:100%_100%] bg-[bottom] text-white shadow hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto"
-                      href="#0"
+                      href="/startups"
                     >
                       <span className="relative inline-flex items-center">
                         Find you next hire{" "}
@@ -57,21 +49,14 @@ export default function HeroHome() {
                         </span>
                       </span>
                     </a>
-                    <a
-                      className="btn w-full bg-white text-gray-800 shadow hover:bg-gray-50 sm:ml-4 sm:w-auto"
-                      href="#0"
-                    >
-                      Find your next job
-                    </a>
+                    <SignUpButton>
+                      <button className="btn w-full bg-white text-gray-800 shadow hover:bg-gray-50 sm:ml-4 sm:w-auto">
+                        Find your next job
+                      </button>
+                    </SignUpButton>
                   </div>
                 </div>
-                <div className="">
-                  {/* <Image
-                    src={women_at_table}
-                    className="pt-10 object-contain"
-                    alt="women at table"
-                  /> */}
-                </div>
+                <div className=""></div>
               </div>
             </div>
           </div>

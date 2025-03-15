@@ -1,12 +1,3 @@
-import Image from "next/image";
-import PlanetImg from "@/public/images/planet.png";
-import PlanetOverlayImg from "@/public/images/planet-overlay.svg";
-import PlanetTagImg01 from "@/public/images/planet-tag-01.png";
-import PlanetTagImg02 from "@/public/images/planet-tag-02.png";
-import PlanetTagImg03 from "@/public/images/planet-tag-03.png";
-import PlanetTagImg04 from "@/public/images/planet-tag-04.png";
-import InfiniteScrollingLogosAnimation from "@/components/logo-scroller";
-import SimpleCard from "@/components/simple-card";
 import PhotoText from "@/components/photo-text";
 import ResumeIcon from "@/components/svg-icons/resume";
 import Magnify from "@/components/svg-icons/magnify";
@@ -18,6 +9,7 @@ import Candidates from "@/components/svg-icons/candidates";
 import Pipeline from "@/components/svg-icons/pipeline";
 import Women from "@/components/svg-icons/women";
 import Unis from "@/components/svg-icons/unis";
+import { SignUpButton } from "@clerk/nextjs";
 
 export default function Offers() {
   return (
@@ -59,23 +51,16 @@ export default function Offers() {
               </PhotoText>
             </div>
             <div className="flex flex-row mt-10">
-              <a
-                className="btn group mb-4 w-full bg-gradient-to-t from-[#FF989F] to-[#DB7B81] bg-[length:100%_100%] bg-[bottom] text-white shadow hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto"
-                href="#0"
-              >
-                <span className="relative inline-flex items-center">
-                  Find you next hire{" "}
-                  <span className="ml-1 tracking-normal text-[#a35d62] transition-transform group-hover:translate-x-0.5">
-                    -&gt;
+              <SignUpButton>
+                <button className="btn group mb-4 w-full bg-gradient-to-t from-[#FF989F] to-[#DB7B81] bg-[length:100%_100%] bg-[bottom] text-white shadow hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto">
+                  <span className="relative inline-flex items-center">
+                    Apply{" "}
+                    <span className="ml-1 tracking-normal text-[#a35d62] transition-transform group-hover:translate-x-0.5">
+                      -&gt;
+                    </span>
                   </span>
-                </span>
-              </a>
-              <a
-                className="btn w-full bg-white text-gray-800 shadow hover:bg-gray-50 sm:ml-4 sm:w-auto"
-                href="#0"
-              >
-                Find your next job
-              </a>
+                </button>
+              </SignUpButton>
             </div>
           </div>
         </div>
@@ -117,10 +102,10 @@ export default function Offers() {
             <div className="mt-10">
               <a
                 className="btn group mb-4 w-full bg-gradient-to-t from-[#FF989F] to-[#DB7B81] bg-[length:100%_100%] bg-[bottom] text-white shadow hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto"
-                href="#0"
+                href="/startups"
               >
                 <span className="relative inline-flex items-center">
-                  Find you next hire{" "}
+                  Learn more{" "}
                   <span className="ml-1 tracking-normal text-[#a35d62] transition-transform group-hover:translate-x-0.5">
                     -&gt;
                   </span>
