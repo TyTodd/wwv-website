@@ -28,7 +28,6 @@ export async function GET(request: Request) {
     const resumeField = fields[fieldIds["Resume"]];
     const currentResume =
       resumeField.length > 0 ? resumeField[resumeField.length - 1] : null;
-    console.log("currentResume", currentResume);
 
     const profile = {
       first_name: fields[fieldIds["First Name"]],

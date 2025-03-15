@@ -90,7 +90,13 @@ export default function Info() {
       setformValues(filteredData);
       console.log("resumeName", resumeName);
       setFileName(resumeName || null);
-      setGlobalStore({ ...filteredData, resumeName: resumeName, saved: true });
+      setGlobalStore({
+        ...filteredData,
+        resumeName: resumeName,
+        saved: true,
+        resume: null,
+      });
+      console.log("globalStore", globalStore);
     }
   };
 
@@ -107,6 +113,7 @@ export default function Info() {
       });
       setFileName(file.name); // Update local state for display
       setSaved(false);
+      console.log("globalStore", globalStore);
     }
   };
 
@@ -146,6 +153,7 @@ export default function Info() {
         };
       }
       setGlobalStore({ ...newGlobalStore, saved: false });
+      console.log("globalStore", globalStore);
     } else if (id === "work_authorization" || id === "visa_sponsorship") {
       // Convert "yes"/"no" string to boolean
       setformValues((prev) => {
@@ -156,6 +164,7 @@ export default function Info() {
         };
       });
       setGlobalStore({ ...globalStore, [id]: value === "yes", saved: false });
+      console.log("globalStore", globalStore);
     } else {
       setformValues((prev) => {
         return {
@@ -164,6 +173,7 @@ export default function Info() {
         };
       });
       setGlobalStore({ ...globalStore, [id]: value, saved: false });
+      console.log("globalStore", globalStore);
     }
   };
 
@@ -201,6 +211,8 @@ export default function Info() {
 
       if (globalStore.resume) {
         formData.append("resume", globalStore.resume);
+      } else {
+        formData.append("resume", "");
       }
 
       // Print form data entries for debugging
@@ -216,6 +228,7 @@ export default function Info() {
           message: "Profile saved!",
         });
         setGlobalStore({ ...globalStore, saved: true });
+        console.log("globalStore", globalStore);
         setSaved(true);
         // Optionally redirect or clear form
       } else {

@@ -36,12 +36,14 @@ export async function PUT(request: Request) {
     //   resumeName = (data.get("resume") as File).name || "";
     // }
     // console.log("upload to uguu success, URL:", resumeUrl);
-
-    let uploadResponse = await uploadFileToAirtable(
-      data.get("resume") as File,
-      recordId,
-      fieldIds["Resume"]
-    );
+    let uploadResponse;
+    if (data.get("resume") && data.get("resume") !== "") {
+      uploadResponse = await uploadFileToAirtable(
+        data.get("resume") as File,
+        recordId,
+        fieldIds["Resume"]
+      );
+    }
 
     const response = await updateUserProfile(
       recordId,
@@ -114,13 +116,22 @@ async function updateUserProfile(
     [fieldIds["Email"]]: data.get("email"),
     [fieldIds["University"]]: data.get("university"),
     [fieldIds["LinkedIn URL"]]: data.get("linkedin_url"),
-    [fieldIds["Opportunity Interests"]]: data.get("opportunity_interests"),
-    [fieldIds["Position Interests"]]: data.get("position_interests"),
-    [fieldIds["Area Interests"]]: data.get("area_interests"),
+    [fieldIds["Opportunity Interests"]]: JSON.parse(
+      data.get("opportunity_interests") as string
+    ),
+    [fieldIds["Position Interests"]]: JSON.parse(
+      data.get("position_interests") as string
+    ),
+    [fieldIds["Area Interests"]]: JSON.parse(
+      data.get("area_interests") as string
+    ),
     [fieldIds["Skills, Interests, Background"]]: data.get("background"),
     [fieldIds["Other Links"]]: data.get("links"),
-    [fieldIds["Work Authorization"]]: data.get("work_authorization"),
-    [fieldIds["Visa Sponsorship"]]: data.get("visa_sponsorship"),
+    [fieldIds["Work Authorization"]]:
+      (data.get("work_authorization") as string) === "true",
+    [fieldIds["Visa Sponsorship"]]:
+      (data.get("visa_sponsorship") as string) === "true",
+    [fieldIds["User ID"]]: data.get("user_id"),
   };
 
   // Only add resume field if resumeUrl is provided
@@ -130,7 +141,7 @@ async function updateUserProfile(
   //       name: resumeName,
   //     };
   //   }
-  console.log("fields", fields);
+  console.log("update user profile fields", fields);
 
   const response = await fetch(
     `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.APPLICANTS_TABLE_ID}/${recordId}`,
