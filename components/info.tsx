@@ -202,6 +202,9 @@ export default function Info() {
       if (globalStore.resume) {
         formData.append("resume", globalStore.resume);
       }
+
+      // Print form data entries for debugging
+      console.log("form data", Array.from(formData.entries()));
       const response = await fetch("/api/update-profile", {
         method: "PUT",
         body: formData,

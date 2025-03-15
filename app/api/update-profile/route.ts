@@ -130,7 +130,7 @@ async function updateUserProfile(
   //       name: resumeName,
   //     };
   //   }
-  //   console.log("fields", fields);
+  console.log("fields", fields);
 
   const response = await fetch(
     `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.APPLICANTS_TABLE_ID}/${recordId}`,
