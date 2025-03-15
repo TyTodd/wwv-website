@@ -201,7 +201,7 @@ export default function Info() {
           if (Array.isArray(value)) {
             formData.append(key, JSON.stringify(value));
           } else if (key == "visa_sponsorship" || key == "work_authorization") {
-            const boolValue = value === "yes" ? "true" : "false";
+            const boolValue = value === true ? "true" : "false";
             formData.append(key, boolValue);
           } else {
             formData.append(key, value as string);
