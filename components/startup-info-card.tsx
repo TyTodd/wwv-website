@@ -28,7 +28,11 @@ const StartupInfoCard: React.FC<CardProps> = ({
         </div>
       </div>
       <div className="flex-1">
-        <Image src={src} alt={title} className="object-contain" />
+        <Image
+          src={src}
+          alt={title}
+          className="object-contain rounded-lg shadow-md"
+        />
       </div>
     </div>
   );

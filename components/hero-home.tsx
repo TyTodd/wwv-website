@@ -1,8 +1,9 @@
 "use client";
 import PageIllustration from "@/components/page-illustration";
-import { SignUpButton } from "@clerk/nextjs";
+import { SignUpButton, useUser } from "@clerk/nextjs";
 
 export default function HeroHome() {
+  const { user } = useUser();
   return (
     <section className="relative min-h-screen">
       <PageIllustration />
@@ -49,11 +50,20 @@ export default function HeroHome() {
                         </span>
                       </span>
                     </a>
-                    <SignUpButton>
-                      <button className="btn w-full bg-white text-gray-800 shadow hover:bg-gray-50 sm:ml-4 sm:w-auto">
+                    {user ? (
+                      <a
+                        className="btn w-full bg-white text-gray-800 shadow hover:bg-gray-50 sm:ml-4 sm:w-auto"
+                        href="/profile/info"
+                      >
                         Find your next job
-                      </button>
-                    </SignUpButton>
+                      </a>
+                    ) : (
+                      <SignUpButton>
+                        <button className="btn w-full bg-white text-gray-800 shadow hover:bg-gray-50 sm:ml-4 sm:w-auto">
+                          Find your next job
+                        </button>
+                      </SignUpButton>
+                    )}
                   </div>
                 </div>
                 <div className=""></div>

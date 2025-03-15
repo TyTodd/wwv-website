@@ -1,3 +1,4 @@
+"use client";
 import PhotoText from "@/components/photo-text";
 import ResumeIcon from "@/components/svg-icons/resume";
 import Magnify from "@/components/svg-icons/magnify";
@@ -9,9 +10,11 @@ import Candidates from "@/components/svg-icons/candidates";
 import Pipeline from "@/components/svg-icons/pipeline";
 import Women from "@/components/svg-icons/women";
 import Unis from "@/components/svg-icons/unis";
-import { SignUpButton } from "@clerk/nextjs";
+import { SignUpButton, useUser } from "@clerk/nextjs";
 
 export default function Offers() {
+  const { user } = useUser();
+  console.log(user);
   return (
     <section className="relative before:absolute before:inset-0 before:-z-20 before:bg-gray-900 h-screen">
       <div className="flex flex-row h-full">
@@ -51,16 +54,30 @@ export default function Offers() {
               </PhotoText>
             </div>
             <div className="flex flex-row mt-10">
-              <SignUpButton>
-                <button className="btn group mb-4 w-full bg-gradient-to-t from-[#FF989F] to-[#DB7B81] bg-[length:100%_100%] bg-[bottom] text-white shadow hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto">
+              {user ? (
+                <a
+                  href="/profile/info"
+                  className="btn group mb-4 w-full bg-gradient-to-t from-[#FF989F] to-[#DB7B81] bg-[length:100%_100%] bg-[bottom] text-white shadow hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto"
+                >
                   <span className="relative inline-flex items-center">
                     Apply{" "}
                     <span className="ml-1 tracking-normal text-[#a35d62] transition-transform group-hover:translate-x-0.5">
                       -&gt;
                     </span>
                   </span>
-                </button>
-              </SignUpButton>
+                </a>
+              ) : (
+                <SignUpButton>
+                  <button className="btn group mb-4 w-full bg-gradient-to-t from-[#FF989F] to-[#DB7B81] bg-[length:100%_100%] bg-[bottom] text-white shadow hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto">
+                    <span className="relative inline-flex items-center">
+                      Apply{" "}
+                      <span className="ml-1 tracking-normal text-[#a35d62] transition-transform group-hover:translate-x-0.5">
+                        -&gt;
+                      </span>
+                    </span>
+                  </button>
+                </SignUpButton>
+              )}
             </div>
           </div>
         </div>
