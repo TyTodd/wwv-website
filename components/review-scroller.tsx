@@ -41,9 +41,6 @@ const ReviewScroller: React.FC<ScrollerProps> = ({ color }) => {
   const a = 1 / 6;
   const transTime = a / Math.ceil((k - 1) / 2);
   const holdTime = (1 - a) / Math.floor((k - 1) / 2);
-  console.log("k %d", k);
-  console.log("trans time %d", transTime);
-  console.log("hold time %d", holdTime);
   let lastTime = 0;
   let animTimes = [];
   for (let i = 0; i < k; i++) {
@@ -65,8 +62,6 @@ const ReviewScroller: React.FC<ScrollerProps> = ({ color }) => {
     animPos.push(`-${last}%`);
   }
   const duration = CompanyLogoData.length * 2;
-  console.log(animTimes);
-  console.log(animPos);
   return (
     <div className="flex w-full flex-col">
       <div className="flex flex-row  mr-20 ml-10 mt-20">

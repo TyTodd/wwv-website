@@ -2,53 +2,63 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
-import UploadForm from "./file-uploader";
-import { useGlobalStore } from "@/store/globalStore";
+// import UploadForm from "./file-uploader";
 
 // Define an interface for the form data
-interface InfoData {
-  theme: string;
-  setTheme: (theme: string) => void;
-}
-
 interface FileData {
-  name: string;
-  size: number;
-  type: string;
-  data: string; // Base64 or Blob URL representation
+  url: string;
+  filename: string;
 }
 
-interface FormValuesType {
-  [key: string]: string | string[] | boolean | undefined;
-  first_name?: string;
-  last_name?: string;
-  email?: string;
-  university?: string;
-  linkedin_url?: string;
+interface FormDataType {
+  [key: string]: string | string[] | boolean | undefined | FileData[];
+  first_name: string;
+  last_name: string;
+  email: string;
+  university: string;
+  linkedin_url: string;
   background?: string;
+  resume?: string;
   links?: string;
-  work_authorization?: boolean;
-  visa_sponsorship?: boolean;
-  opportunity_interests?: string[];
-  position_interests?: string[];
-  area_interests?: string[];
+  work_authorization: boolean;
+  visa_sponsorship: boolean;
+  opportunity_interests: string[];
+  position_interests: string[];
+  area_interests: string[];
 }
 
 export default function Info() {
   const [userType, setUserType] = useState("student");
   const { user, isLoaded } = useUser();
-  const [formValues, setformValues] = useState<FormValuesType>({});
+  const [formData, setFormData] = useState<FormDataType>({
+    first_name: "",
+    last_name: "",
+    email: "",
+    university: "",
+    linkedin_url: "",
+    resume: "",
+    work_authorization: false,
+    visa_sponsorship: false,
+    opportunity_interests: [],
+    position_interests: [],
+    area_interests: [],
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({
     success: false,
     message: "",
   });
   const [saved, setSaved] = useState(true);
+  const [resume, setResume] = useState<File | null>(null);
   const [profileFetched, setProfileFetched] = useState(false);
-  const { globalStore, setGlobalStore, resetGlobalStore } = useGlobalStore();
-  const [fileName, setFileName] = useState<string | null>(
-    globalStore.resume?.name || null
-  );
+
+  function handleResumeChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files || e.target.files.length === 0) {
+      setResume(null);
+      return;
+    }
+    setResume(e.target.files[0]);
+  }
 
   useEffect(() => {
     if (!profileFetched && isLoaded && user) {
@@ -61,53 +71,10 @@ export default function Info() {
       method: "GET",
     });
     const data = await response.json();
-    // const { last_updated, resume, ...filteredGlobalStore } = globalStore;
-    if (
-      globalStore.last_updated &&
-      new Date(globalStore.last_updated) > new Date(data.last_updated) &&
-      globalStore.saved !== undefined
-    ) {
-      console.log("using globalStore");
-      setformValues({
-        first_name: globalStore.first_name,
-        last_name: globalStore.last_name,
-        email: globalStore.email,
-        university: globalStore.university,
-        linkedin_url: globalStore.linkedin_url,
-        work_authorization: globalStore.work_authorization,
-        visa_sponsorship: globalStore.visa_sponsorship,
-        opportunity_interests: globalStore.opportunity_interests,
-        position_interests: globalStore.position_interests,
-        area_interests: globalStore.area_interests,
-        background: globalStore.background,
-        links: globalStore.links,
-      });
-      setFileName(globalStore.resumeName || null);
-      setSaved(globalStore.saved);
-    } else {
-      console.log("using backend");
-      const { last_updated, resumeName, ...filteredData } = data;
-      setformValues(filteredData);
-      console.log("resumeName", resumeName);
-      setFileName(resumeName || null);
-      setGlobalStore({ ...filteredData, resumeName: resumeName, saved: true });
-    }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("handleFileChange");
-    const file = e.target.files?.[0]; // Get the first selected file
-    if (file) {
-      console.log("setting globalStore");
-      setGlobalStore({
-        ...globalStore,
-        resume: file,
-        resumeName: file.name,
-        saved: false,
-      });
-      setFileName(file.name); // Update local state for display
-      setSaved(false);
-    }
+    setFormData((prev) => ({
+      ...prev,
+      ...data,
+    }));
   };
 
   const handleInputChange = (
@@ -117,7 +84,7 @@ export default function Info() {
     const { id, value, type, checked } = e.target as HTMLInputElement;
     if (type === "checkbox") {
       // For checkboxes, we need to handle multiple selections
-      setformValues((prev) => {
+      setFormData((prev) => {
         const fieldName = e.target.name;
         const prevValues = (prev[fieldName] as string[]) || [];
 
@@ -130,81 +97,47 @@ export default function Info() {
           };
         }
       });
-
-      let newGlobalStore;
-      const fieldName = e.target.name;
-      const prevValues = (globalStore[fieldName] as string[]) || [];
-      if (checked) {
-        newGlobalStore = {
-          ...globalStore,
-          [fieldName]: [...prevValues, value],
-        };
-      } else {
-        newGlobalStore = {
-          ...globalStore,
-          [fieldName]: prevValues.filter((item) => item !== value),
-        };
-      }
-      setGlobalStore({ ...newGlobalStore, saved: false });
     } else if (id === "work_authorization" || id === "visa_sponsorship") {
       // Convert "yes"/"no" string to boolean
-      setformValues((prev) => {
+      setFormData((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
           [id]: value === "yes",
         };
       });
-      setGlobalStore({ ...globalStore, [id]: value === "yes", saved: false });
     } else {
-      setformValues((prev) => {
+      setFormData((prev) => {
         return {
           ...prev,
           [id]: value,
         };
       });
-      setGlobalStore({ ...globalStore, [id]: value, saved: false });
     }
   };
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus({ success: false, message: "" });
 
     try {
       // Combine user data with form data
-      const formData = new FormData();
-      if (!user) {
-        console.error("user is undefined");
-        return;
-      }
-      formData.append(
-        "email",
-        user.primaryEmailAddress?.emailAddress || formValues?.email || ""
-      );
-      formData.append("user_id", user.id);
+      let dataToSubmit = {
+        ...formData,
+        userType,
+        email: user?.primaryEmailAddress?.emailAddress || formData?.email,
+        user_id: user?.id,
+      };
+      // Remove termsAgreement from formData before submitting
+      delete (dataToSubmit as any).termsAgreement;
+      delete (dataToSubmit as any).userType;
 
-      Object.keys(formValues).forEach((key) => {
-        const value = formValues[key];
-        if (value !== null && value !== undefined) {
-          if (Array.isArray(value)) {
-            formData.append(key, JSON.stringify(value));
-          } else if (key == "visa_sponsorship" || key == "work_authorization") {
-            const boolValue = value === "yes" ? "true" : "false";
-            formData.append(key, boolValue);
-          } else {
-            formData.append(key, value as string);
-          }
-        }
-      });
-
-      if (globalStore.resume) {
-        formData.append("resume", globalStore.resume);
-      }
       const response = await fetch("/api/update-profile", {
         method: "PUT",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSubmit),
       });
 
       if (response.ok) {
@@ -212,8 +145,6 @@ export default function Info() {
           success: true,
           message: "Profile saved!",
         });
-        setGlobalStore({ ...globalStore, saved: true });
-        setSaved(true);
         // Optionally redirect or clear form
       } else {
         const errorData = await response.json();
@@ -232,6 +163,7 @@ export default function Info() {
       });
     } finally {
       setIsSubmitting(false);
+      setSaved(true);
     }
   };
   if (!profileFetched) {
@@ -273,7 +205,7 @@ export default function Info() {
                       type="text"
                       placeholder="Daniela"
                       required
-                      value={formValues?.first_name || ""}
+                      value={formData?.first_name || ""}
                       onChange={handleInputChange}
                     />
                   </div>
@@ -289,7 +221,7 @@ export default function Info() {
                       className="form-input py-2"
                       type="text"
                       placeholder="Andrade"
-                      value={formValues?.last_name || ""}
+                      value={formData?.last_name || ""}
                       required
                       onChange={handleInputChange}
                     />
@@ -307,7 +239,7 @@ export default function Info() {
                     className="form-input py-2"
                     type="email"
                     placeholder="corybarker@email.com"
-                    value={formValues?.email || ""}
+                    value={formData?.email || ""}
                     readOnly={true}
                     required
                     onChange={handleInputChange}
@@ -326,7 +258,7 @@ export default function Info() {
                     type="text"
                     autoComplete="on"
                     placeholder=""
-                    value={formValues?.university || ""}
+                    value={formData?.university || ""}
                     required
                     onChange={handleInputChange}
                   />
@@ -344,7 +276,7 @@ export default function Info() {
                     type="url"
                     autoComplete="on"
                     placeholder=""
-                    value={formValues?.linkedin_url || ""}
+                    value={formData?.linkedin_url || ""}
                     required
                     onChange={handleInputChange}
                   />
@@ -365,7 +297,7 @@ export default function Info() {
                         value="Ad-hoc projects"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.opportunity_interests?.includes(
+                          formData?.opportunity_interests?.includes(
                             "Ad-hoc projects"
                           ) || false
                         }
@@ -383,7 +315,7 @@ export default function Info() {
                         value="Term-time internships"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.opportunity_interests?.includes(
+                          formData?.opportunity_interests?.includes(
                             "Term-time internships"
                           ) || false
                         }
@@ -401,7 +333,7 @@ export default function Info() {
                         value="Summer internships"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.opportunity_interests?.includes(
+                          formData?.opportunity_interests?.includes(
                             "Summer internships"
                           ) || false
                         }
@@ -419,7 +351,7 @@ export default function Info() {
                         value="Full-time employment"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.opportunity_interests?.includes(
+                          formData?.opportunity_interests?.includes(
                             "Full-time employment"
                           ) || false
                         }
@@ -447,7 +379,7 @@ export default function Info() {
                         value="Software Development"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.position_interests?.includes(
+                          formData?.position_interests?.includes(
                             "Software Development"
                           ) || false
                         }
@@ -465,7 +397,7 @@ export default function Info() {
                         value="Design (UI/UX, product design, etc.)"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.position_interests?.includes(
+                          formData?.position_interests?.includes(
                             "Design (UI/UX, product design, etc.)"
                           ) || false
                         }
@@ -486,7 +418,7 @@ export default function Info() {
                         value="Marketing & Growth"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.position_interests?.includes(
+                          formData?.position_interests?.includes(
                             "Marketing & Growth"
                           ) || false
                         }
@@ -504,7 +436,7 @@ export default function Info() {
                         value="Finance / Operations"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.position_interests?.includes(
+                          formData?.position_interests?.includes(
                             "Finance / Operations"
                           ) || false
                         }
@@ -524,7 +456,7 @@ export default function Info() {
                         value="Product Management"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.position_interests?.includes(
+                          formData?.position_interests?.includes(
                             "Product Management"
                           ) || false
                         }
@@ -542,7 +474,7 @@ export default function Info() {
                         value="Content, Social Media, and Communications"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.position_interests?.includes(
+                          formData?.position_interests?.includes(
                             "Content, Social Media, and Communications"
                           ) || false
                         }
@@ -563,7 +495,7 @@ export default function Info() {
                         value="Data Science & Analytics"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.position_interests?.includes(
+                          formData?.position_interests?.includes(
                             "Data Science & Analytics"
                           ) || false
                         }
@@ -591,7 +523,7 @@ export default function Info() {
                         value="AI & Machine Learning"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.area_interests?.includes(
+                          formData?.area_interests?.includes(
                             "AI & Machine Learning"
                           ) || false
                         }
@@ -609,7 +541,7 @@ export default function Info() {
                         value="Healthcare & Biotechnology"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.area_interests?.includes(
+                          formData?.area_interests?.includes(
                             "Healthcare & Biotechnology"
                           ) || false
                         }
@@ -627,8 +559,7 @@ export default function Info() {
                         value="FinTech"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.area_interests?.includes("FinTech") ||
-                          false
+                          formData?.area_interests?.includes("FinTech") || false
                         }
                         onChange={handleInputChange}
                       />
@@ -644,7 +575,7 @@ export default function Info() {
                         value="IT & Cybersecurity"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.area_interests?.includes(
+                          formData?.area_interests?.includes(
                             "IT & Cybersecurity"
                           ) || false
                         }
@@ -664,7 +595,7 @@ export default function Info() {
                         value="Energy, Climate, and Sustainability"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.area_interests?.includes(
+                          formData?.area_interests?.includes(
                             "Energy, Climate, and Sustainability"
                           ) || false
                         }
@@ -684,7 +615,7 @@ export default function Info() {
                         type="checkbox"
                         value="Education"
                         className="form-checkbox mr-2 h-5 w-5"
-                        checked={formValues?.area_interests?.includes(
+                        checked={formData?.area_interests?.includes(
                           "Education"
                         )}
                         onChange={handleInputChange}
@@ -701,7 +632,7 @@ export default function Info() {
                         value="Consumer & Wellness"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.area_interests?.includes(
+                          formData?.area_interests?.includes(
                             "Consumer & Wellness"
                           ) || false
                         }
@@ -719,7 +650,7 @@ export default function Info() {
                         value="Legal"
                         className="form-checkbox mr-2 h-5 w-5"
                         checked={
-                          formValues?.area_interests?.includes("Legal") || false
+                          formData?.area_interests?.includes("Legal") || false
                         }
                         onChange={handleInputChange}
                       />
@@ -742,7 +673,7 @@ export default function Info() {
                       id="background"
                       className="form-textarea py-2 h-32 w-full"
                       placeholder="Tell us more about yourself..."
-                      value={formValues?.background || ""}
+                      value={formData?.background || ""}
                       onChange={handleInputChange}
                     />
                   </div>
@@ -776,29 +707,8 @@ export default function Info() {
                     type="text"
                     className="form-input w-full py-2"
                     placeholder="Enter other relevant links..."
-                    value={formValues?.links || ""}
+                    value={formData?.links || ""}
                     onChange={handleInputChange}
-                  />
-                </div>
-                <div className="mt-4 w-3/4">
-                  <label
-                    className="mb-1 block  font-medium text-gray-700"
-                    htmlFor="resume"
-                  >
-                    Upload New Resume
-                  </label>
-                  {fileName && (
-                    <div className="mt-2 text-gray-600">
-                      Current Resume: {fileName}
-                    </div>
-                  )}
-                  <input
-                    id="resume"
-                    name="resume"
-                    type="file"
-                    accept=".pdf"
-                    className="form-input py-2"
-                    onChange={handleFileChange}
                   />
                 </div>
                 <div className="mt-4 w-2/4">
@@ -814,7 +724,7 @@ export default function Info() {
                     name="work_authorization"
                     className="form-select py-2 w-full"
                     required
-                    value={formValues?.work_authorization ? "yes" : "no"}
+                    value={formData?.work_authorization ? "yes" : "no"}
                     onChange={handleInputChange}
                   >
                     <option value="">Select an option</option>
@@ -834,7 +744,7 @@ export default function Info() {
                     id="visa_sponsorship"
                     name="visa_sponsorship"
                     className="form-select py-2 w-full"
-                    value={formValues?.visa_sponsorship ? "yes" : "no"}
+                    value={formData?.visa_sponsorship ? "yes" : "no"}
                     required
                     onChange={handleInputChange}
                   >
@@ -872,6 +782,27 @@ export default function Info() {
             </div>
           )}
         </form>
+        <div className="mt-4 w-3/4">
+          <label
+            className="mb-1 block  font-medium text-gray-700"
+            htmlFor="resume"
+          >
+            Upload Your Resume
+          </label>
+          <input
+            id="resume"
+            name="resume"
+            type="file"
+            accept=".pdf"
+            className="form-input py-2"
+            onChange={handleResumeChange}
+          />
+          {resume && (
+            <div className="mt-2 text-gray-600">
+              Selected file: {resume.name}
+            </div>
+          )}
+        </div>
       </div>
     </>
   );

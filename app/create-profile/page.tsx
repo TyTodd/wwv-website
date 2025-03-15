@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 
 // Define an interface for the form data
-interface FormDataType {
-  [key: string]: string | string[] | FileAttachment[] | undefined;
+interface FormValuesType {
+  [key: string]: string | string[] | FileAttachment[] | undefined | File;
   email?: string;
 }
 
@@ -17,43 +17,30 @@ interface FileAttachment {
 export default function Profile() {
   const [userType, setUserType] = useState("");
   const { user, isLoaded } = useUser();
-  const [formData, setFormData] = useState<FormDataType>({});
+  const [formValues, setformValues] = useState<FormValuesType>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({
     success: false,
     message: "",
   });
-  useEffect(() => {
-    if (isLoaded && user) {
-      console.log(user);
-    }
-  }, [isLoaded, user]);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { id, value, type, checked, files } = e.target as HTMLInputElement;
+    const { id, value, type, checked } = e.target as HTMLInputElement;
+    const inputTarget = e.target as HTMLInputElement; // Type assertion
 
-    if (type === "file" && files && files.length > 0) {
+    if (type === "file") {
+      const file = inputTarget.files?.[0];
       // Handle file upload
-      const file = files[0];
-      // Create a URL for the file
-      const fileUrl = URL.createObjectURL(file);
-      console.log("fileUrl", fileUrl);
-      console.log("file", file);
 
-      setFormData((prev) => ({
+      setformValues((prev) => ({
         ...prev,
-        [id]: [
-          {
-            url: fileUrl,
-            filename: file.name,
-          },
-        ],
+        [id]: file,
       }));
     } else if (type === "checkbox") {
       // For checkboxes, handle multiple selections
-      setFormData((prev) => {
+      setformValues((prev) => {
         const fieldName = e.target.name;
         const prevValues = (prev[fieldName] as string[]) || [];
 
@@ -68,7 +55,7 @@ export default function Profile() {
       });
     } else {
       // For other input types
-      setFormData((prev) => ({ ...prev, [id]: value }));
+      setformValues((prev) => ({ ...prev, [id]: value }));
     }
   };
 
@@ -79,34 +66,44 @@ export default function Profile() {
 
     try {
       // Combine user data with form data
-      let dataToSubmit = {
-        ...formData,
-        userType,
-        email: user?.primaryEmailAddress?.emailAddress || formData.email,
-        user_id: user?.id,
-        work_authorization:
-          formData.work_authorization === "yes" ? true : false,
-        visa_sponsorship: formData.visa_sponsorship === "yes" ? true : false,
-      };
-      console.log(dataToSubmit);
-      // Remove termsAgreement from formData before submitting
-      delete (dataToSubmit as any).termsAgreement;
-      delete (dataToSubmit as any).userType;
+      const formData = new FormData();
+      if (!user) {
+        console.error("user is undefined");
+        return;
+      }
+      formData.append(
+        "email",
+        user.primaryEmailAddress?.emailAddress || formValues?.email || ""
+      );
+      formData.append("user_id", user.id);
+
+      Object.keys(formValues).forEach((key) => {
+        const value = formValues[key];
+        if (value !== null && value !== undefined) {
+          if (Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value));
+          } else if (value instanceof File) {
+            formData.append(key, value);
+          } else if (key == "visa_sponsorship" || key == "work_authorization") {
+            const boolValue = value === "yes" ? "true" : "false";
+            formData.append(key, boolValue);
+          } else {
+            formData.append(key, value as string);
+          }
+        }
+      });
 
       const response = await fetch("/api/create-profile", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSubmit),
+        body: formData,
       });
+      // const response = { ok: true };
 
       if (response.ok) {
         setSubmitStatus({
           success: true,
-          message: "Profile created successfully!",
+          message: "Profile saved!",
         });
-        window.location.href = "/profile";
         // Optionally redirect or clear form
       } else {
         const errorData = await response.json();
@@ -114,7 +111,7 @@ export default function Profile() {
           success: false,
           message:
             errorData.message ||
-            "Failed to create profile. Please try again later.",
+            "Failed to save profile. Please try again later.",
         });
       }
     } catch (error) {

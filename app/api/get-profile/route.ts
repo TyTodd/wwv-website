@@ -8,7 +8,6 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const user_id = searchParams.get("user_id");
-    console.log("user_id", user_id);
 
     if (!user_id) {
       return new Response(
@@ -26,6 +25,10 @@ export async function GET(request: Request) {
     const result = await getUserProfile(user_id);
 
     const fields = result.records[0].fields;
+    const resumeField = fields[fieldIds["Resume"]];
+    const currentResume =
+      resumeField.length > 0 ? resumeField[resumeField.length - 1] : null;
+    console.log("currentResume", currentResume);
 
     const profile = {
       first_name: fields[fieldIds["First Name"]],
@@ -40,6 +43,8 @@ export async function GET(request: Request) {
       visa_sponsorship: fields[fieldIds["Visa Sponsorship"]],
       work_authorization: fields[fieldIds["Work Authorization"]],
       links: fields[fieldIds["Other Links"]],
+      last_updated: fields[fieldIds["Last Updated"]],
+      resumeName: currentResume?.filename,
     };
     return new Response(JSON.stringify(profile), {
       status: 200,
@@ -67,7 +72,6 @@ export async function GET(request: Request) {
 }
 
 async function getUserProfile(userId: string) {
-  console.log("userId", userId);
   const response = await fetch(
     `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.APPLICANTS_TABLE_ID}?returnFieldsByFieldId=true&filterByFormula=%7BUser+ID%7D+%3D+%22${userId}%22`,
     {

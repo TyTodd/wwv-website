@@ -76,35 +76,33 @@ const HomeIcon = () => {
 };
 
 const UserProfilePage = () => (
-  <div style={{ minHeight: "100vh", width: "100vw" }}>
-    <UserProfile
-      path="/profile"
-      routing="path"
-      appearance={{
-        elements: {
-          rootBox: {
-            width: "100vw",
-            maxWidth: "100vw",
-            height: "100vh",
-            maxHeight: "100vh",
-          },
-          cardBox: {
-            width: "100vw",
-            maxWidth: "100vw",
-            height: "100vh",
-            maxHeight: "100vh",
-          },
-          header: "text-2xl",
+  <UserProfile
+    path="/profile"
+    routing="path"
+    appearance={{
+      elements: {
+        rootBox: {
+          width: "100vw",
+          maxWidth: "100vw",
+          height: "100vh",
+          maxHeight: "100vh",
         },
-      }}
-    >
-      {/* You can pass the content as a component */}
-      <UserProfile.Page label="Your Info" labelIcon={<ResumeIcon />} url="info">
-        <Info />
-      </UserProfile.Page>
-      <UserProfile.Link label="Home" url="/" labelIcon={<HomeIcon />} />
-    </UserProfile>
-  </div>
+        cardBox: {
+          width: "100vw",
+          maxWidth: "100vw",
+          height: "100vh",
+          maxHeight: "100vh",
+        },
+        header: "text-2xl",
+      },
+    }}
+  >
+    {/* You can pass the content as a component */}
+    <UserProfile.Page label="Your Info" labelIcon={<ResumeIcon />} url="info">
+      <Info />
+    </UserProfile.Page>
+    <UserProfile.Link label="Home" url="/" labelIcon={<HomeIcon />} />
+  </UserProfile>
 );
 
 export default UserProfilePage;

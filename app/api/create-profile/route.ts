@@ -1,3 +1,5 @@
+import { uploadFile, uploadFileToAirtable } from "../api-utils";
+
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
 const APPLICANTS_TABLE_ID = process.env.APPLICANTS_TABLE_ID;
@@ -7,8 +9,7 @@ const USER_TYPES_TABLE_ID = process.env.USER_TYPES_TABLE_ID;
 export async function POST(request: Request) {
   try {
     const fieldIds = await import("../fieldIds.json");
-    console.log("fieldIds", fieldIds);
-    const data = await request.json();
+    const data = await request.formData();
 
     // Validate required fields
     const requiredFields = [
@@ -26,7 +27,8 @@ export async function POST(request: Request) {
     ];
 
     for (const field of requiredFields) {
-      if (!data[field]) {
+      if (!data.get(field)) {
+        console.error("Missing required field", field);
         return new Response(
           JSON.stringify({
             error: `Missing required field: ${field}`,
@@ -41,8 +43,8 @@ export async function POST(request: Request) {
       }
     }
 
-    const userExists = await checkUserExists(data.user_id);
-    console.log("userExists", userExists);
+    const userExists = await checkUserExists(data.get("user_id") as string);
+    console.error("user already exists", userExists);
     if (userExists) {
       return new Response(JSON.stringify({ error: "User already exists" }), {
         status: 400,
@@ -54,7 +56,7 @@ export async function POST(request: Request) {
     const createUserResponse = await createUser(data);
     if (!createUserResponse.ok) {
       const errorData = await createUserResponse.json();
-      console.log("errorData", errorData);
+      console.error("Failed to create profile", errorData);
       return new Response(
         JSON.stringify({
           error: `Failed to create profile in Airtable: ${errorData.error?.message || "Unknown error"}`,
@@ -69,6 +71,23 @@ export async function POST(request: Request) {
     }
 
     const result = await createUserResponse.json();
+
+    const profileId = result.records[0].id;
+    const resumeResponse = await uploadFileToAirtable(
+      data.get("resume") as File,
+      profileId,
+      fieldIds["Resume"]
+    );
+
+    if (!resumeResponse.ok) {
+      console.error("Failed to upload resume", resumeResponse);
+      return new Response(
+        JSON.stringify({ error: "Failed to upload resume" }),
+        {
+          status: 400,
+        }
+      );
+    }
 
     return new Response(
       JSON.stringify({
@@ -102,7 +121,6 @@ export async function POST(request: Request) {
 }
 
 async function checkUserExists(userId: string) {
-  console.log("userId", userId);
   const response = await fetch(
     `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.APPLICANTS_TABLE_ID}?fields%5B%5D=User+ID&filterByFormula=%7BUser+ID%7D+%3D+%22${userId}%22`,
     {
@@ -115,12 +133,34 @@ async function checkUserExists(userId: string) {
   );
 
   const result = await response.json();
-  console.log("result", result);
   return result.records.length > 0;
 }
 
 async function createUser(data: any) {
   const fieldIds = await import("../fieldIds.json");
+  const fields = {
+    [fieldIds["First Name"]]: data.get("first_name"),
+    [fieldIds["Last Name"]]: data.get("last_name"),
+    [fieldIds["Email"]]: data.get("email"),
+    [fieldIds["University"]]: data.get("university"),
+    [fieldIds["LinkedIn URL"]]: data.get("linkedin_url"),
+    [fieldIds["Opportunity Interests"]]: JSON.parse(
+      data.get("opportunity_interests") as string
+    ),
+    [fieldIds["Position Interests"]]: JSON.parse(
+      data.get("position_interests") as string
+    ),
+    [fieldIds["Area Interests"]]: JSON.parse(
+      data.get("area_interests") as string
+    ),
+    [fieldIds["Skills, Interests, Background"]]: data.get("background"),
+    [fieldIds["Other Links"]]: data.get("links"),
+    [fieldIds["Work Authorization"]]:
+      (data.get("work_authorization") as string) === "true",
+    [fieldIds["Visa Sponsorship"]]:
+      (data.get("visa_sponsorship") as string) === "true",
+    [fieldIds["User ID"]]: data.get("user_id"),
+  };
   const response = await fetch(
     `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.APPLICANTS_TABLE_ID}`,
     {
@@ -132,21 +172,7 @@ async function createUser(data: any) {
       body: JSON.stringify({
         records: [
           {
-            fields: {
-              [fieldIds["First Name"]]: data.first_name,
-              [fieldIds["Last Name"]]: data.last_name,
-              [fieldIds["Email"]]: data.email,
-              [fieldIds["University"]]: data.university,
-              [fieldIds["LinkedIn URL"]]: data.linkedin_url,
-              [fieldIds["Opportunity Interests"]]: data.opportunity_interests,
-              [fieldIds["Position Interests"]]: data.position_interests,
-              [fieldIds["Area Interests"]]: data.area_interests,
-              [fieldIds["Skills, Interests, Background"]]: data.background,
-              [fieldIds["Other Links"]]: data.links,
-              [fieldIds["Work Authorization"]]: data.work_authorization,
-              [fieldIds["Visa Sponsorship"]]: data.visa_sponsorship,
-              [fieldIds["User ID"]]: data.user_id,
-            },
+            fields: fields,
           },
         ],
       }),
