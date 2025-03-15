@@ -104,6 +104,7 @@ export default function Profile() {
           success: true,
           message: "Profile saved!",
         });
+        window.location.href = "/profile";
         // Optionally redirect or clear form
       } else {
         const errorData = await response.json();
