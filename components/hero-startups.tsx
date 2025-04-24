@@ -40,31 +40,43 @@ export default function HeroStartups() {
                 leading US universities. Hire exceptional candidates across
                 engineering, sales, product, marketing, operations, and more.
               </p>
-              <div className="flex w-full justify-center flex-col">
-                <div className="relative before:absolute before:inset-0 before:border-y before:[border-image:linear-gradient(to_right,transparent,theme(colors.slate.300/.8),transparent)1]">
+              <div className="flex w-full justify-center flex-col mt-10">
+                <div className="relative py-8 px-4 sm:px-8 bg-white bg-opacity-90 rounded-2xl shadow-xl border border-gray-100 backdrop-blur-sm">
+                  <div className="absolute inset-x-0 -top-1 h-px bg-gradient-to-r from-transparent via-[#FF989F] to-transparent"></div>
+                  <div className="absolute inset-x-0 -bottom-1 h-px bg-gradient-to-r from-transparent via-[#FF989F] to-transparent"></div>
+                  
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">Ready to find your perfect candidate?</h3>
+                  
                   <div
-                    className="mx-auto max-w-xs sm:flex sm:max-w-none sm:justify-center"
+                    className="flex flex-col sm:flex-row sm:justify-center gap-4 mt-6"
                     data-aos="zoom-y-out"
                     data-aos-delay={450}
                   >
                     <a
-                      className="btn group mb-4 w-full bg-gradient-to-t from-[#FF989F] to-[#DB7B81] bg-[length:100%_100%] bg-[bottom] text-white shadow hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto"
+                      className="inline-flex items-center justify-center px-6 py-3.5 text-base font-medium text-white bg-gradient-to-r from-[#FF989F] to-[#DB7B81] rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#DB7B81]"
                       href="https://tally.so/r/wLJA8v"
                     >
                       <span className="relative inline-flex items-center">
-                        Submit a Job Request{" "}
-                        <span className="ml-1 tracking-normal text-[#a35d62] transition-transform group-hover:translate-x-0.5">
-                          -&gt;
-                        </span>
+                        Submit a Job Request
+                        <svg className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
                       </span>
                     </a>
                     <a
-                      className="btn w-full bg-white text-gray-800 shadow hover:bg-gray-50 sm:ml-4 sm:w-auto"
+                      className="inline-flex items-center justify-center px-6 py-3.5 text-base font-medium text-gray-800 bg-white border border-gray-200 rounded-lg shadow-sm transition duration-300 ease-in-out transform hover:scale-105 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
                       href="https://calendly.com/adrian_arnaboldi/wwv-labs-meeting"
                     >
+                      <svg className="mr-2 w-4 h-4 text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                      </svg>
                       Schedule a Call
                     </a>
                   </div>
+                  
+                  <p className="text-gray-500 text-sm text-center mt-6">
+                    Join 200+ startups already hiring top female talent through our platform
+                  </p>
                 </div>
                 <div className="">
                   {/* <Image
